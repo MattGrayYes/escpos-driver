@@ -744,13 +744,13 @@ export class Printer<AdapterCloseArgs extends []> extends EventEmitter {
    * @param  {[type]} density [description]
    * @return {[Printer]} printer  [the escpos printer instance]
    */
-  async image(image: Image, density: BitmapDensity = "d24", number: LineSpacing = 0) {
+  async image(image: Image, density: BitmapDensity = "d24", lineSpacing: number = 0) {
     if (!(image instanceof Image)) throw new TypeError("Only escpos.Image supported");
     const n = ~["D8", "S8"].indexOf(utils.upperCase(density)) ? 1 : 3;
     const header = _.BITMAP_FORMAT[`BITMAP_${utils.upperCase(density)}` as const];
     const bitmap = image.toBitmap(n * 8);
 
-    this.lineSpace(LineSpacing); // set line spacing to 0 by default for receipt printers
+    this.lineSpace(lineSpacing); // set line spacing to 0 by default for receipt printers
     bitmap.data.forEach((line) => {
       this.buffer.write(header);
       this.buffer.writeUInt16LE(line.length / n);
